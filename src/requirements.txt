@@ -1,0 +1,7 @@
+python-dotenv
+watchdog
+redis
+rq
+sqlalchemy
+mysql-connector-python
+apscheduler
