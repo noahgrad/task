@@ -50,33 +50,26 @@ Follow these steps to get the project up and running:
 
 ## Setting Up RQ
 
-1. **Start Redis Server**: If you haven't already, start your Redis server.
+ **Start Redis Server**: If you haven't already, start your Redis server.
 
     ```bash
     redis-server
     ```
 
-2. **Run RQ Worker**: Navigate to the project directory and run the following command to start an RQ worker.
-
-    ```bash
-    rq worker
-    ```
-
 ## How It Works
-
 - **Database Manager (`src/db_manager.py`)**: Manages database operations.
 - **File Watcher (`src/file_watcher.py`)**: Watches for file changes.
 - **Queue Manager (`src/queue_manager.py`)**: Manages task queues using RQ.
-- **Task Runner (`src/task_runner.py`)**: Executes tasks.
+- **Task Runner (`src/task_runner.py`)**: The main. it starts the scheduler for the daily update, build db tables if don't exist,
+  start the watcher that monitor the directory and start the workers on the queues.
 - **Worker Function (`src/worker_function_my_sql.py`)**: Worker function for MySQL operations.
 
 ## Scalability
 
-Your implementation is designed for scalability for the following reasons:
-
 - **Modular Design**: Each component (Database Manager, File Watcher, Queue Manager, etc.) is designed to function independently, making it easier to scale each component as needed.
   
-- **Asynchronous Task Handling**: Using RQ for background tasks allows the system to handle more tasks concurrently, improving throughput.
+- **Asynchronous Task Handling**: Using RQ for background tasks allows the system to handle more tasks concurrently, improving throughput. we can create more queues
+  if we will have more file types
 
 - **Distributed Computing**: With Redis and RQ, tasks can be distributed across multiple workers and even multiple machines, allowing for horizontal scaling.
 
