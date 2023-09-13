@@ -1,28 +1,62 @@
-# Task Project
+# Lemonade Task Project
 
 ## Table of Contents
 
-1. [Prerequisites](#prerequisites)
-2. [Installation](#installation)
-3. [Configuration](#configuration)
-4. [Setting Up RQ](#setting-up-rq)
-5. [How It Works](#how-it-works)
-6. [Scalability](#scalability)
-7. [Usage](#usage)
+1. [Overview](#overview)
+2. [Features](#features)
+3. [Scalability](#scalability)
+4. [Prerequisites](#prerequisites)
+5. [Installation](#installation)
+6. [Configuration](#configuration)
+7. [File Structure](#file-structure)
+8. [Running Tests](#running-tests)
+9. [Creating the Package](#creating-the-package)
+10. [Usage](#usage)
+
+
+---
+
+## Overview
+
+The Lemonade Task Project is a Python-based solution designed for efficient and scalable task management. It leverages Redis, RQ (Redis Queue), and MySQL for robust, distributed task handling.
+
+---
+
+## Features
+
+- **File Watcher**: Monitors a directory for file changes.
+- **Queue Manager**: Manages tasks in a Redis queue.
+- **Database Manager**: Handles MySQL database operations.
+
+---
+
+## Scalability
+
+### Why is it Scalable?
+
+1. **Distributed Task Queue**: Utilizes RQ and Redis for distributing tasks across multiple workers.
+2. **Asynchronous Operations**: Enables asynchronous task execution.
+3. **Modular Design**: Independent, scalable components.
+
+---
 
 ## Prerequisites
 
-Before you begin, ensure you have met the following requirements:
+### Software Requirements
 
-- **Python 3.x**: The project is written in Python and requires Python 3.x to run.
-- **MySQL Database**: The project uses MySQL for database operations.
-- **Redis**: The project uses Redis as an in-memory data store.
-- **RQ (Redis Queue)**: Used for managing background tasks.
-- **pip**: Make sure you have pip installed for package management.
+- Python 3.x
+- Redis server
+- RQ (Redis Queue)
+- MySQL server
+
+### Hardware Requirements
+
+- Minimum 2 GB RAM
+- Minimum 10 GB disk space
+
+---
 
 ## Installation
-
-Follow these steps to get the project up and running:
 
 1. **Clone the Repository**
 
@@ -30,7 +64,7 @@ Follow these steps to get the project up and running:
     git clone https://github.com/noahgrad/task.git
     ```
 
-2. **Navigate to the Project Directory**
+2. **Navigate to Project Directory**
 
     ```bash
     cd task
@@ -39,44 +73,88 @@ Follow these steps to get the project up and running:
 3. **Install Required Packages**
 
     ```bash
-    pip install -r src/requirements.txt
+    pip install -r requirements.txt
     ```
+
+4. **Install Development Requirements (Optional)**
+
+    ```bash
+    pip install -r requirements-dev.txt
+    ```
+
+5. **Make sure redis server is running**
+6. **make sure mysql is running and setting are updated.**
+---
 
 ## Configuration
 
-1. **Database Settings**: Edit the `src/config/settings.py` file to configure your MySQL database settings.
-2. **Redis Settings**: Make sure Redis is running on the specified port in your configuration.
-3. **Environment Variables**: Run `utils/prepare_env.py` to set up the necessary environment variables.
+1. **Redis Configuration**: Update Redis server details in `src/lemonade_task/config/settings.py`.
+2. **Database Configuration**: Update MySQL configurations in `src/lemonade_task/config/settings.py`.
 
-## Setting Up RQ
+---
 
- **Start Redis Server**: If you haven't already, start your Redis server.
+## File Structure
+
+### `src/lemonade_task` Directory
+
+- `db_manager.py`: Manages MySQL database operations.
+- `file_watcher.py`: Watches a directory for file changes.
+     - hanlde files that are alredy in the directory and new files that are coming
+     - for each file: read it and send each event to the matching queue
+     - move the file after processing to history directory
+- `models.py`: Defines the data models.
+- `queue_manager.py`: Manages the Redis queue.
+- `task_runner.py`: Entry point for running tasks.
+     -  create database tables
+     -  update last event summary history table
+     -  start the scheduler for summary
+     -  start the watcher that watch the inbound directory
+- `worker_function_my_sql.py`: Worker functions for MySQL operations (insert into the tables).
+
+### `config` Sub-directory
+
+- `settings.py`: Contains configuration settings like Redis and MySQL details.
+
+### `tests` Directory
+
+- `test_file_watcher.py`: Tests for file watcher functionality.
+
+### `utils` Directory
+
+- `prepare_env.py`: Utility script for preparing the environment.
+
+---
+
+## Running Tests
+
+1. **Navigate to Project Directory**
+2. **Run Tests**
 
     ```bash
-    redis-server
+    pytest tests/
     ```
 
-## How It Works
-- **Database Manager (`src/db_manager.py`)**: Manages database operations.
-- **File Watcher (`src/file_watcher.py`)**: Watches for file changes.
-- **Queue Manager (`src/queue_manager.py`)**: Manages task queues using RQ.
-- **Task Runner (`src/task_runner.py`)**: The main. it starts the scheduler for the daily update, build db tables if don't exist,
-  start the watcher that monitor the directory and start the workers on the queues.
-- **Worker Function (`src/worker_function_my_sql.py`)**: Worker function for MySQL operations.
+---
 
-## Scalability
+## Creating the Package
 
-- **Modular Design**: Each component (Database Manager, File Watcher, Queue Manager, etc.) is designed to function independently, making it easier to scale each component as needed.
-  
-- **Asynchronous Task Handling**: Using RQ for background tasks allows the system to handle more tasks concurrently, improving throughput. we can create more queues
-  if we will have more file types
+1. **Navigate to Project Directory**
+2. **Create Source Distribution**
 
-- **Distributed Computing**: With Redis and RQ, tasks can be distributed across multiple workers and even multiple machines, allowing for horizontal scaling.
+    ```bash
+    python setup.py sdist
+    ```
+
+---
 
 ## Usage
 
-Run the following command to start the project:
+```bash
+pip install task_project-0.1.0.tar.gz
+```
+
+After installing the package, use the `task_runner` command to start:
 
 ```bash
-python src/task_runner.py
+task_runner
 
