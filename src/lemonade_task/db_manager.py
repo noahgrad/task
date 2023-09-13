@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from mysql.connector import OperationalError
 from lemonade_task.config import settings
 from lemonade_task.models import VehicleEvents, DailySummary, Base
-from sqlalchemy import func
+from sqlalchemy import func, exists
 
 
 class DBManager:
@@ -44,6 +44,8 @@ class DBManager:
             print("Max retries reached. Exiting.")
         session.close()
 
+    from sqlalchemy import exists
+
     def update_daily_summary(self):
         """
         Updates the daily summary table based on the events table.
@@ -62,13 +64,22 @@ class DBManager:
             )
 
             for row in query:
-                summary = DailySummary(
-                    vehicle_id=row.vehicle_id,
-                    day=row.day,
-                    last_event_time=row.last_event_time,
-                    last_event_type=row.event_type
-                )
-                session.merge(summary)
+                # Check if a record with the same vehicle_id and day already exists
+                exists_query = session.query(exists().where(
+                    DailySummary.vehicle_id == row.vehicle_id
+                ).where(
+                    DailySummary.day == row.day
+                )).scalar()
+
+                # If the record doesn't exist, insert it
+                if not exists_query:
+                    summary = DailySummary(
+                        vehicle_id=row.vehicle_id,
+                        day=row.day,
+                        last_event_time=row.last_event_time,
+                        last_event_type=row.event_type
+                    )
+                    session.add(summary)
 
             session.commit()
         except Exception as e:
