@@ -8,7 +8,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
-def process_file(filepath, processing_funcs):
+def process_file(filepath, processing_funcs, history_dir=HISTORY_PATH):
     """
     Processes a file based on its type and moves it to the history folder.
 
@@ -23,7 +23,7 @@ def process_file(filepath, processing_funcs):
                 func(filepath)
 
         # Move the file to the history folder
-        history_folder = HISTORY_PATH
+        history_folder = history_dir
         if not os.path.exists(history_folder):
             os.makedirs(history_folder)
         shutil.move(filepath, f"{history_folder}/{filepath.split('/')[-1]}")
