@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from lemonade_task.src.config.settings import SRC_PATH
+from lemonade_task.config.settings import SRC_PATH
 # Create a folder for testing
 test_folder = SRC_PATH
 if not os.path.exists(test_folder):

@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from mysql.connector import OperationalError
-from config import settings
-from models import VehicleEvents, DailySummary, Base
+from lemonade_task.config import settings
+from lemonade_task.models import VehicleEvents, DailySummary, Base
 from sqlalchemy import func
-from sqlalchemy.ext.declarative import declarative_base
+
 
 class DBManager:
     """

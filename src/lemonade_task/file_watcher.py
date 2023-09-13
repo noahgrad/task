@@ -1,6 +1,6 @@
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from config.settings import HISTORY_PATH
+from lemonade_task.config.settings import HISTORY_PATH
 import os
 import shutil
 import time

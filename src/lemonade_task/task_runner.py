@@ -1,13 +1,13 @@
 import json, os
 import subprocess
 import atexit
-from file_watcher import Watcher  # Import the Watcher class
-from queue_manager import QueueManager
+from lemonade_task.file_watcher import Watcher  # Import the Watcher class
+from lemonade_task.queue_manager import QueueManager
 from dotenv import load_dotenv
 load_dotenv()
-from config.settings import SRC_PATH, LOG_DIR
+from lemonade_task.config.settings import SRC_PATH, LOG_DIR
 from apscheduler.schedulers.background import BackgroundScheduler
-from db_manager import DBManager
+from lemonade_task.db_manager import DBManager
 
 
 
@@ -48,7 +48,7 @@ def terminate_workers(workers):
     for worker in workers:
         worker.terminate()
 
-if __name__ == '__main__':
+def main():
     db = DBManager()
 
     # create the tables if needed
@@ -72,13 +72,18 @@ if __name__ == '__main__':
     workers = []
     for name in processing_funcs:
         with open(f"{LOG_DIR}/worker_output_{name}.log", "w+") as f:
-            workers.append(subprocess.Popen(["rq", "worker", name], stdout=f, stderr=f, cwd=script_directory, env=os.environ))
+            workers.append(
+                subprocess.Popen(["rq", "worker", name], stdout=f, stderr=f, cwd=script_directory, env=os.environ))
 
     # Register the termination function to be called when the script exits
     atexit.register(terminate_workers, workers)
 
     watcher = Watcher(SRC_PATH, processing_funcs)
     watcher.run()
+
+
+if __name__ == '__main__':
+    main()
 
 
 

@@ -1,7 +1,7 @@
 from redis import Redis
 from rq import Queue
-from config import settings
-from worker_function_my_sql import insert_vehicle_status, insert_vehicle_event
+from lemonade_task.config import settings
+from lemonade_task.worker_function_my_sql import insert_vehicle_status, insert_vehicle_event
 import logging
 
 logging.basicConfig(level=logging.INFO)

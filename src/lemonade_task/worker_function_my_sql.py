@@ -1,5 +1,5 @@
-from db_manager import DBManager
-from models import VehicleEvents, VehicleStatus
+from lemonade_task.db_manager import DBManager
+from lemonade_task.models import VehicleEvents, VehicleStatus
 import datetime, json
 import logging
 logging.basicConfig(level=logging.INFO)

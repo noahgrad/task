@@ -2,7 +2,7 @@ import unittest
 import os
 import shutil
 from unittest.mock import patch
-from task.src.file_watcher import process_file, Watcher, Handler
+from lemonade_task.file_watcher import process_file, Watcher, Handler
 
 class TestFileWatcher(unittest.TestCase):
 
@@ -38,7 +38,7 @@ class TestFileWatcher(unittest.TestCase):
         watcher = Watcher(self.test_dir, {})
         self.assertEqual(watcher.DIRECTORY_TO_WATCH, self.test_dir)
 
-    @patch('task.src.file_watcher.process_file')
+    @patch('lemonade_task.file_watcher.process_file')
     def test_watcher_process_existing_files(self, mock_process_file):
         watcher = Watcher(self.test_dir, {})
         test_file_path = os.path.join(self.test_dir, 'test_file.txt')
@@ -48,7 +48,7 @@ class TestFileWatcher(unittest.TestCase):
         watcher.process_existing_files()
         mock_process_file.assert_called_with(test_file_path, {})
 
-    @patch('task.src.file_watcher.process_file')  # Replace 'your_module' with the actual module name
+    @patch('lemonade_task.file_watcher.process_file')  # Replace 'your_module' with the actual module name
     def test_handler_process(self, mock_process_file):
         handler = Handler({})
         class DummyEvent:
